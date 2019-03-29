@@ -1,2 +1,2 @@
 # pysudoku
-Implement sudoku with Python
+Implement Sudoku with Python 3.7+
