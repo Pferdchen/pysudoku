@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # Open a file
-path = "./templates/template1.txt"
+path = "../templates/template1.txt"
 fo = open(path, "r")
 str = fo.read()
 print ("Sudoku template:\n", str)
