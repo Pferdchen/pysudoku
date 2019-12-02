@@ -50,8 +50,8 @@ def calculate(sudoku, suggestion):
                         possible_values.discard(sudoku[k][j])  # remove on vertical
 
                 x, y = square_position(i, j)
-                for r in range(x, x + 3):
-                    for s in range(y, y + 3):
+                for r in range(x, x + SQUARE_OFFSET):
+                    for s in range(y, y + SQUARE_OFFSET):
                         if r != i and s != j:
                             possible_values.discard(sudoku[r][s])  # remove in square
 
@@ -80,8 +80,8 @@ def reduce_sets_on_axis(sudoku, suggestion, i, j):
 
 def reduce_sets_in_square(sudoku, suggestion, i, j):
     x, y = square_position(i, j)
-    for r in range(x, x + 3):
-        for s in range(y, y + 3):
+    for r in range(x, x + SQUARE_OFFSET):
+        for s in range(y, y + SQUARE_OFFSET):
             if r != i and s != j and len(suggestion[r][s]) > 1:
                 suggestion[r][s].discard(sudoku[i][j])
                 reduce_sets(sudoku, suggestion, r, s)
