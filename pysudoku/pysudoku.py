@@ -1,45 +1,43 @@
 #!/usr/bin/python3
 
 
-def read_template(path):
-    fo = open(path, "r")
-    template = fo.read()
-    fo.close()
-    return template
+def read_template(file_name):
+    with open(file_name) as file:
+        return file.read()
 
 
 def init_sudoku(template):
     matrix = list()
     for line in template.split(LINE_FEED):
-        row = list()
-        for c in list(line):
+        num_list = list()
+        for c in line:
             if c.isdecimal():
-                row.append(int(c))
+                num_list.append(int(c))
             else:
-                row.append(0)
-        matrix.append(row)
+                num_list.append(None)
+        matrix.append(num_list)
     return matrix
 
 
-def init_suggestion(matrix):
-    suggestion = list()
+def init_suggestion_sets(matrix):
+    suggestion_matrix = list()
     for i in range(9):
-        row = list()
+        suggestion_set_list = list()
         for j in range(9):
             num = matrix[i][j]
-            if num != 0:
-                row.append(set([num]))
+            if num is not None:
+                suggestion_set_list.append({num})
             else:
-                row.append(FULL_SUGGESTIONS.copy())
-        suggestion.append(row)
-    return suggestion
+                suggestion_set_list.append(FULL_SUGGESTION.copy())
+        suggestion_matrix.append(suggestion_set_list)
+    return suggestion_matrix
 
 
 def calculate(sudoku, suggestion):
     for i in range(9):
         for j in range(9):
             num = sudoku[i][j]
-            if num != 0:
+            if num is not None:
                 continue
             else:
                 possible_values = suggestion[i][j]
@@ -59,11 +57,9 @@ def calculate(sudoku, suggestion):
 
 
 def reduce_sets(sudoku, suggestion, i, j):
-    possible_set = suggestion_sets[i][j]
-    if len(possible_set) == 1 and sudoku[i][j] == 0:
-        find = possible_set.pop()
-        sudoku[i][j] = find
-        possible_set.add(find)  # restore popped number in set
+    possible_values = suggestion[i][j]
+    if len(possible_values) == 1 and sudoku[i][j] is None:
+        sudoku[i][j] = max(possible_values)  # only one possible value
         reduce_sets_on_axis(sudoku, suggestion, i, j)
         reduce_sets_in_square(sudoku, suggestion, i, j)
 
@@ -91,25 +87,35 @@ def square_position(i, j):
     return (i // 3) * 3, (j // 3) * 3
 
 
+def write_result(matrix):
+    result = ""
+    for num_list in sudoku_matrix:
+        for n in num_list:
+            result += '{}'
+            if n is None:
+                result = result.format(SPACE)
+            else:
+                result = result.format(n)
+        result += LINE_FEED
+    return result
+
+
 # main begin
 LINE_FEED = '\n'
+SPACE = ' '
 SQUARE_OFFSET = 3
-FULL_SUGGESTIONS = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+FULL_SUGGESTION = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 
-sudoku_template = read_template("../templates/template1.txt")
+path = "../templates/template1.txt"
+sudoku_template = read_template(path)
 print("Sudoku template:" + LINE_FEED + sudoku_template)
 
 sudoku_matrix = init_sudoku(sudoku_template)
-suggestion_sets = init_suggestion(sudoku_matrix)
+suggestion_sets = init_suggestion_sets(sudoku_matrix)
 # print(suggestion_sets)
 
 calculate(sudoku_matrix, suggestion_sets)
-# print(suggestion_sets)
+print(suggestion_sets)
 
-sudoku_result = ""
-for num_line in sudoku_matrix:
-    for cell_num in num_line:
-        sudoku_result += '{}'
-        sudoku_result = sudoku_result.format(cell_num)
-    sudoku_result += LINE_FEED
+sudoku_result = write_result(sudoku_matrix)
 print("Sudoku result:" + LINE_FEED + sudoku_result)
