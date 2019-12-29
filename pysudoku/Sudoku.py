@@ -30,6 +30,18 @@ class Sudoku:
         for i in range(81):
             cell = Cell(temp_array[i])
             self.solution.append(cell)
-            self.rows[i // 9].append(cell)
-            self.columns[i % 9].append(cell)
-            self.regions[((i // 9 // 3) * 3) + ((i % 9) // 3)].append(cell)
+            self.rows[Sudoku.row_index(i)].append(cell)
+            self.columns[Sudoku.column_index(i)].append(cell)
+            self.regions[Sudoku.region_index(i)].append(cell)
+
+    @staticmethod
+    def row_index(i: int) -> int:
+        return i // 9
+
+    @staticmethod
+    def column_index(i: int) -> int:
+        return i % 9
+
+    @staticmethod
+    def region_index(i: int) -> int:
+        return ((i // 9 // 3) * 3) + ((i % 9) // 3)
