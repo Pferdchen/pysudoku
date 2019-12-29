@@ -47,11 +47,11 @@ def calculate(sudoku, suggestion):
                     if k != i:
                         possible_values.discard(sudoku[k][j])  # remove on vertical
 
-                x, y = square_position(i, j)
-                for r in range(x, x + SQUARE_OFFSET):
-                    for s in range(y, y + SQUARE_OFFSET):
+                x, y = region_position(i, j)
+                for r in range(x, x + REGION_OFFSET):
+                    for s in range(y, y + REGION_OFFSET):
                         if r != i and s != j:
-                            possible_values.discard(sudoku[r][s])  # remove in square
+                            possible_values.discard(sudoku[r][s])  # remove in region
 
                 reduce_sets(sudoku, suggestion, i, j)
 
@@ -61,7 +61,7 @@ def reduce_sets(sudoku, suggestion, i, j):
     if len(possible_values) == 1 and sudoku[i][j] is None:
         sudoku[i][j] = max(possible_values)  # only one possible value
         reduce_sets_on_axis(sudoku, suggestion, i, j)
-        reduce_sets_in_square(sudoku, suggestion, i, j)
+        reduce_sets_in_region(sudoku, suggestion, i, j)
 
 
 def reduce_sets_on_axis(sudoku, suggestion, i, j):
@@ -74,16 +74,16 @@ def reduce_sets_on_axis(sudoku, suggestion, i, j):
             reduce_sets(sudoku, suggestion, k, j)
 
 
-def reduce_sets_in_square(sudoku, suggestion, i, j):
-    x, y = square_position(i, j)
-    for r in range(x, x + SQUARE_OFFSET):
-        for s in range(y, y + SQUARE_OFFSET):
+def reduce_sets_in_region(sudoku, suggestion, i, j):
+    x, y = region_position(i, j)
+    for r in range(x, x + REGION_OFFSET):
+        for s in range(y, y + REGION_OFFSET):
             if r != i and s != j and len(suggestion[r][s]) > 1:
                 suggestion[r][s].discard(sudoku[i][j])
                 reduce_sets(sudoku, suggestion, r, s)
 
 
-def square_position(i, j):
+def region_position(i, j):
     return (i // 3) * 3, (j // 3) * 3
 
 
@@ -103,7 +103,7 @@ def write_result(matrix):
 # main begin
 LINE_FEED = '\n'
 SPACE = ' '
-SQUARE_OFFSET = 3
+REGION_OFFSET = 3
 FULL_SUGGESTION = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 
 path = "../templates/template1.txt"
