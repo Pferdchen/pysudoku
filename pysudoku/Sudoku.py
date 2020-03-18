@@ -16,19 +16,18 @@ class Cell:
 
 
 class Sudoku:
-    def __init__(self, temp_array):
-        self.solution = list()  # 9*9 cells
+    def __init__(self, puzzle):
         self.rows = list()  # 9 rows, each 9 cells
-        for i in range(9):
-            self.rows.append(list())
         self.columns = list()  # 9 columns, each 9 cells
-        for i in range(9):
-            self.columns.append(list())
         self.regions = list()  # 9 regions, each 9 cells
         for i in range(9):
+            self.rows.append(list())
+            self.columns.append(list())
             self.regions.append(list())
+
+        self.solution = list()  # 9*9 cells
         for i in range(81):
-            cell = Cell(temp_array[i])
+            cell = Cell(puzzle[i])
             self.solution.append(cell)
             self.rows[Sudoku.row_index(i)].append(cell)
             self.columns[Sudoku.column_index(i)].append(cell)
